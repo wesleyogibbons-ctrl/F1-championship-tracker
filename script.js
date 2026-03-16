@@ -62,7 +62,7 @@ function renderTrack(layerId, data, mode) {
         let chosenLane = 0;
         for (let l = 0; l < LANE_OFFSETS.length; l++) {
             // Is this lane empty at this Y-height?
-            if (yPos > laneMemory[l] + VERTICAL_BUFFER || points == 0) {
+            if (yPos > laneMemory[l] + VERTICAL_BUFFER || (points == 0 && yPos !== laneMemory[l]) {
                 chosenLane = l;
                 break;
             }
