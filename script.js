@@ -62,10 +62,10 @@ function renderTrack(layerId, data, mode) {
         let chosenLane = 0;
         for (let l = 0; l < LANE_OFFSETS.length; l++) {
             // Is this lane empty at this Y-height?
-            if (yPos > laneMemory[l] + VERTICAL_BUFFER || (points == 0 && yPos !== laneMemory[l]) {
+            if (yPos > laneMemory[l] + VERTICAL_BUFFER) {
                 chosenLane = l;
                 break;
-            }
+            } else if (points == 0 && yPos > laneMemory[l] + 1)
         }
         
         // If the grid is extremely packed, cycle through as a failsafe
