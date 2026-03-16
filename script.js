@@ -14,7 +14,7 @@ const TEAM_CONFIG = {
 
 // Middle-Out Lane Order: Center, Inner-Right, Inner-Left, Outer-Right, Outer-Left
 const LANE_OFFSETS = ["50%", "90%", "10%", "77%", "23%", "38%", "62%"];
-const VERTICAL_BUFFER = 40; // Pixels needed between cars in the same lane
+const VERTICAL_BUFFER = 80; // Pixels needed between cars in the same lane
 
 async function syncData() {
     try {
@@ -65,7 +65,7 @@ function renderTrack(layerId, data, mode) {
             if (yPos > laneMemory[l] + VERTICAL_BUFFER) {
                 chosenLane = l;
                 break;
-            } 
+            }
         }
         
         // If the grid is extremely packed, cycle through as a failsafe
