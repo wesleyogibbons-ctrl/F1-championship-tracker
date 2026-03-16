@@ -65,10 +65,7 @@ function renderTrack(layerId, data, mode) {
             if (yPos > laneMemory[l] + VERTICAL_BUFFER) {
                 chosenLane = l;
                 break;
-            } else if (points == 0 && yPos > laneMemory[l] + 1){
-                chosenLane = l;
-                break;
-            }
+            } 
         }
         
         // If the grid is extremely packed, cycle through as a failsafe
