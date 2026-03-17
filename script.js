@@ -61,7 +61,6 @@ function renderTrack(layerId, data, mode) {
 
         // 3. MIDDLE-OUT LOGIC: Find the first available lane from the center outward
        
-       chosenLane++
         
         // If the grid is extremely packed, cycle through as a failsafe
         if (chosenLane === undefined) chosenLane = index % LANE_OFFSETS.length;
@@ -93,6 +92,11 @@ function renderTrack(layerId, data, mode) {
                 ${name.toUpperCase()} (${points})
             </div>
         `;
+        if(chosenLane<6){
+            chosenLane++
+        }else{
+            chosenLane = 0
+            )
     });
 }
 
