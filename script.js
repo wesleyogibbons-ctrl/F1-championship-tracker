@@ -39,42 +39,68 @@ function renderTrack(layerId, data, mode) {
     const layer = document.getElementById(layerId);
     if (!layer) return;
     
+    // Calculate track bounds
     const trackHeight = layer.parentElement.offsetHeight - 100;
     const maxPoints = Math.max(...data.map(d => parseFloat(d.points)));
+
+    // 1. Sort highest points to lowest points (Leader goes first)
     const sortedData = [...data].sort((a, b) => b.points - a.points);
-    let laneMemory = Array(LANE_OFFSETS.length).fill(-200);
+
+    // 2. Track the last Y coordinate used in each of the 5 lanes
+    let laneMemory = [-200, -200, -200, -200, -200, -200, -200]; 
 
     sortedData.forEach((entry, index) => {
         const points = parseFloat(entry.points);
-        
-        // --- ADDED: ZERO POINTS SPECIAL HANDLING ---
-        let yPos;
-        let chosenLane;
+        const teamId = mode === 'driver' ? entry.Constructors[0].constructorId : entry.Constructor.constructorId;
+        const name = mode === 'driver' ? entry.Driver.familyName : entry.Constructor.name;
+        const id = mode === 'driver' ? entry.Driver.driverId : entry.Constructor.constructorId;
 
-        if (maxPoints === 0 || points === 0) {
-            // If points are 0, stick them to the bottom
-            yPos = trackHeight;
-            // Spread them across lanes using the index to ensure even distribution
-            chosenLane = index % LANE_OFFSETS.length;
-        } else {
-            // Standard Proportional Y calculation
-            yPos = ((maxPoints - points) / maxPoints) * trackHeight;
+        // Proportional Y calculation
+        const yPos = maxPoints > 0 ? ((maxPoints - points) / maxPoints) * trackHeight : trackHeight;
 
-            // Middle-out logic for non-zero points
-            chosenLane = 0; 
-            for (let l = 0; l < LANE_OFFSETS.length; l++) {
-                if (yPos > laneMemory[l] + VERTICAL_BUFFER) {
-                    chosenLane = l;
-                    break;
-                }
+        // 3. MIDDLE-OUT LOGIC: Find the first available lane from the center outward
+        let chosenLane = 0;
+        for (let l = 0; l < LANE_OFFSETS.length; l++) {
+            // Is this lane empty at this Y-height?
+            if (yPos > laneMemory[l] + VERTICAL_BUFFER) {
+                chosenLane = l;
+                break;
             }
         }
-        // --------------------------------------------
-
+        
+        // If the grid is extremely packed, cycle through as a failsafe
+        if (chosenLane === undefined) chosenLane = index % LANE_OFFSETS.length;
+        
+        // Mark this lane as occupied at this height
         laneMemory[chosenLane] = yPos;
 
-        // ... rest of your DOM creation logic remains the same ...
-        const teamId = mode === 'driver' ? entry.Constructors[0].constructorId : entry.Constructor.constructorId;
-        // etc...
+        // 4. Create or update the car DOM element
+        let car = document.getElementById(`${mode}-${id}`);
+        if (!car) {
+            car = document.createElement('div');
+            car.id = `${mode}-${id}`;
+            car.className = 'car-node';
+            layer.appendChild(car);
+        }
+
+        // Apply Position
+        car.style.left = LANE_OFFSETS[chosenLane];
+        // -50% centers the car exactly on the left% percentage mark
+        car.style.transform = `translate(-50%, ${yPos}px)`;
+        
+        // Z-Index: ensure cars lower on points stay visually behind the leaders
+        car.style.zIndex = Math.round(yPos);
+
+        const teamColor = TEAM_CONFIG[teamId]?.color || '#888';
+        car.innerHTML = `
+            <img src="${TEAM_CONFIG[teamId]?.img || ''}" onerror="this.src='https://media.formula1.com/d_team_car_fallback_image.png'">
+            <div class="label" style="border-bottom: 3px solid ${teamColor}">
+                ${name.toUpperCase()} (${points})
+            </div>
+        `;
     });
 }
+
+// Initial load and auto-refresh
+syncData();
+setInterval(syncData, 60000);
