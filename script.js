@@ -65,9 +65,6 @@ function renderTrack(layerId, data, mode) {
             if (yPos > laneMemory[l] + VERTICAL_BUFFER) {
                 chosenLane = l;
                 break;
-            } else if (yPos >laneMemory[l] && points == 0){
-                chosenLane = l;
-                break;
             }
         }
         
