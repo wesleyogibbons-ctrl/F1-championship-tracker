@@ -18,7 +18,7 @@ const VERTICAL_BUFFER = 80; // Pixels needed between cars in the same lane
 
 async function syncData() {
     try {
-        const year = 2025;
+        const year = 2026;
         const [dRes, cRes] = await Promise.all([
             fetch(`https://api.jolpi.ca/ergast/f1/${year}/driverStandings.json`).then(r => r.json()),
             fetch(`https://api.jolpi.ca/ergast/f1/${year}/constructorStandings.json`).then(r => r.json())
