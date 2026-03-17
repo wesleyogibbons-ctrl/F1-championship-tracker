@@ -48,8 +48,7 @@ function renderTrack(layerId, data, mode) {
 
     // 2. Track the last Y coordinate used in each of the 5 lanes
     let laneMemory = [-200, -200, -200, -200, -200, -200, -200]; 
-    let chosenLane = 0;
-    
+
     sortedData.forEach((entry, index) => {
         const points = parseFloat(entry.points);
         const teamId = mode === 'driver' ? entry.Constructors[0].constructorId : entry.Constructor.constructorId;
@@ -60,7 +59,14 @@ function renderTrack(layerId, data, mode) {
         const yPos = maxPoints > 0 ? ((maxPoints - points) / maxPoints) * trackHeight : trackHeight;
 
         // 3. MIDDLE-OUT LOGIC: Find the first available lane from the center outward
-       
+        let chosenLane = 0;
+        for (let l = 0; l < LANE_OFFSETS.length; l++) {
+            // Is this lane empty at this Y-height?
+            if (yPos > laneMemory[l] + VERTICAL_BUFFER) {
+                chosenLane = l;
+                break;
+            }
+        }
         
         // If the grid is extremely packed, cycle through as a failsafe
         if (chosenLane === undefined) chosenLane = index % LANE_OFFSETS.length;
@@ -92,11 +98,6 @@ function renderTrack(layerId, data, mode) {
                 ${name.toUpperCase()} (${points})
             </div>
         `;
-        if(chosenLane<6){
-            chosenLane++
-        }else{
-            chosenLane = 0
-            )
     });
 }
 
