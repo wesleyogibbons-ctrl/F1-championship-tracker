@@ -13,7 +13,7 @@ const TEAM_CONFIG = {
 };
 
 // Middle-Out Lane Order: Center, Inner-Right, Inner-Left, Outer-Right, Outer-Left
-const LANE_OFFSETS = ["50%", "90%", "10%", "77%", "23%", "38%", "62%"];
+const LANE_OFFSETS = ["50%", "90%", "10%", "80%", "20%", "60%", "40%", "70%", "30%"];
 const VERTICAL_BUFFER = 80; // Pixels needed between cars in the same lane
 
 async function syncData() {
@@ -47,7 +47,7 @@ function renderTrack(layerId, data, mode) {
     const sortedData = [...data].sort((a, b) => b.points - a.points);
 
     // 2. Track the last Y coordinate used in each of the 5 lanes
-    let laneMemory = [-200, -200, -200, -200, -200, -200, -200]; 
+    let laneMemory = [-200, -200, -200, -200, -200, -200, -200, -200, -200]; 
 
     sortedData.forEach((entry, index) => {
         const points = parseFloat(entry.points);
